@@ -5,6 +5,7 @@ import Image from 'next/image'
 
 const FlipCoin = () => {
     const [coinSideHead, setCoinSideHead] = useState<boolean>(true)
+    const [isEditing, setIsEditing] = useState(false)
 
 
     const randomEnumValue = () => {
@@ -12,12 +13,21 @@ const FlipCoin = () => {
         return values[Math.floor(Math.random() * values.length)];
     }
 
+
     const setCoinSideHandler = () => {
         const enumValue: string = randomEnumValue()
         if (enumValue === 'Heads') {
-            setCoinSideHead(true)
+            setIsEditing(true)
+            setTimeout(() => {
+                setIsEditing(false)
+                setCoinSideHead(true)
+            }, 1000);
         } else {
-            setCoinSideHead(false)
+            setIsEditing(true)
+            setTimeout(() => {
+                setIsEditing(false)
+                setCoinSideHead(false)
+            }, 1000);
         }
 
     }
@@ -27,28 +37,51 @@ const FlipCoin = () => {
             <h1 className="mb-6 text-4xl font-extrabold leading-none tracking-tight text-gray-900 md:text-5xl lg:text-6xl dark:text-white">
                 Flip a coin</h1>
             {coinSideHead &&
-                <Image
-                    src="heads.jpg"
-                    alt="heads coin"
-                    width={200}
-                    height={200}
-                />
+                <div>
+                    <Image
+                        src="heads.jpg"
+                        alt="heads coin"
+                        width={200}
+                        height={200}
+                    />
+                    <p className="mt-2 flex items-center justify-center">Heads</p>
+                </div>
             }
             {!coinSideHead &&
-                <Image
-                    src="tails.jpg"
-                    alt="tails coin"
-                    width={200}
-                    height={200}
-                />
+                <div>
+                    <Image
+                        src="tails.jpg"
+                        alt="tails coin"
+                        width={200}
+                        height={200}
+                    />
+                    <p className="mt-2 flex items-center justify-center">Tails</p>
+                </div>
             }
-
-            <button className="mt-6 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
-                    onClick={setCoinSideHandler}>Flip
-            </button>
+            {isEditing &&
+                <button className="flex flex-row mt-6 bg-blue-700 text-white font-bold py-2 px-4 rounded" disabled>
+                    <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg"
+                         fill="none" viewBox="0 0 24 24">
+                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor"
+                                stroke-width="4"></circle>
+                        <path className="opacity-75" fill="currentColor"
+                              d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                    </svg>
+                    Fliping...
+                </button>
+            }
+            {!isEditing &&
+                <button className="mt-6 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+                        onClick={setCoinSideHandler}>Flip
+                </button>
+            }
         </div>
     );
 };
+
+function delay(ms: number) {
+    return new Promise(resolve => setTimeout(resolve, ms));
+}
 
 enum CoinSide {
     Heads = "HEADS",
